@@ -111,27 +111,17 @@ for (let i = 0; i < 9; i++) {
 const canvas = document.getElementById("my-canvas");
 const ctx = canvas.getContext("2d");
 
-// Рисуем горизонтальные линии
-horizontalLines.forEach(line => {
-    const { start, end, isSelected } = line;
-    ctx.beginPath();
-    ctx.lineWidth = 2;
-    ctx.moveTo(start.x, start.y);
-    ctx.lineTo(end.x, end.y);
-    ctx.strokeStyle = isSelected ? "black" : "#ddd";
-    ctx.stroke();
-});
+const drawLine = line => {
+    ctx.strokeStyle = line.isSelected ? "black" : "#ddd"
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.moveTo(line.start.x, line.start.y)
+    ctx.lineTo(line.end.x, line.end.y)
+    ctx.stroke()
+}
 
-// Рисуем вертикальные линии
-verticalLines.forEach(line => {
-    const { start, end, isSelected } = line;
-    ctx.beginPath();
-    ctx.lineWidth = 2;
-    ctx.moveTo(start.x, start.y);
-    ctx.lineTo(end.x, end.y);
-    ctx.strokeStyle = isSelected ? "black" : "#ddd";
-    ctx.stroke();
-});
+// Рисуем линии
+horizontalLines.concat(verticalLines).forEach(line => drawLine(line))
 
 // Add a click event listener to the canvas
 canvas.addEventListener('click', onCanvasClick);
@@ -173,7 +163,7 @@ function onCanvasClick(event) {
     }
 }
 
-function findClickedLine(x, y, lines) {
+const findClickedLine = (x, y, lines) => {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         if ((y >= line.clickableStart.y && y <= line.clickableEnd.y &&
@@ -186,21 +176,16 @@ function findClickedLine(x, y, lines) {
     return null;
 }
 
-function drawHighlightedLines(lines) {
+const drawHighlightedLines = lines => {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         if (line.isSelected) {
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(line.start.x, line.start.y);
-            ctx.lineTo(line.end.x, line.end.y);
-            ctx.stroke();
+            drawLine(line)
         }
     }
 }
 
-function checkForCompletedCells(cells, clickedLine, ctx) {
+const checkForCompletedCells = cells => {
     // Check which player is active
     const activePlayer = players[activePlayerIndex];
 
